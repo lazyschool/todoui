@@ -1,0 +1,79 @@
+import React, { Component } from 'react';
+const axios = require('axios');
+
+
+class SignUp extends Component {
+    constructor() {
+        super();
+        axios.defaults.headers.common["Content-Type"] = 'application/json';
+        axios.defaults.headers.common['Accept'] = 'application/json';
+        axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem('token')}`;
+
+        this.state = {
+            email: '',
+            password: '',
+            name: '',
+            submitted: false,
+            error: ''
+        };
+
+        this.handleChangeName = this.handleChangeName.bind(this);
+        this.handleChangeEmail = this.handleChangeEmail.bind(this);
+        this.handleChangePassword = this.handleChangePassword.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChangeName(e) {
+        this.setState({ name: e });
+    }
+
+    handleChangeEmail(e) {
+        this.setState({ email: e });
+    }
+
+    handleChangePassword(e) {
+        this.setState({ password: e });
+    }
+
+    handleSubmit(e) {
+
+        this.setState({ submitted: true });
+        const data = { email: this.state.email, name: this.state.name, password: this.state.password }
+        axios.post(`http://localhost:8080/signup`, data)
+            .then(res => {
+                if (res.status === 200) {
+                    this.props.history.push('/login')
+                }
+            });
+    }
+
+    render() {
+        return (
+            <div className="col-md-6 col-md-offset-3">
+
+                <div className='form-group'>
+                    <label>Name</label>
+                    <input type="text" className="form-control" value={this.state.name} onChange={(e) => this.handleChangeName(e.target.value)} />
+                </div>
+
+                <div className='form-group'>
+                    <label>Email</label>
+                    <input type="text" className="form-control" value={this.state.email} onChange={(e) => this.handleChangeEmail(e.target.value)} />
+
+                </div>
+
+                <div className='form-group'>
+                    <label>Password</label>
+                    <input type="password" className="form-control" value={this.state.password} onChange={(e) => this.handleChangePassword(e.target.value)} />
+
+                </div>
+
+                <div className="form-group">
+                    <button onClick={this.handleSubmit} className="btn btn-primary" >Sign Up</button>
+                </div>
+            </div>
+        );
+    }
+}
+
+export default SignUp;
